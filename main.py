@@ -19,7 +19,7 @@ def create_activity():
 def main():
     print("----- Programa para calcular la ruta crítica -----")
 
-    graph = Graph()
+    graph:Graph = Graph()
     
     getActivitiesData(graph)
 
@@ -37,11 +37,15 @@ def main():
             graph.add_activity(activity)
             save_activity(activity)
         elif (option == '2'):
-            crit_path = graph.find_critical_path()
+            crit_path, min_execution_time = graph.find_critical_path()
             path = ''
-            for node in crit_path:
-                path += node.number + ' > '
-            print(f'Critical path: {path}')
+            if (len(crit_path) > 0):
+                for node in crit_path:
+                    path += node.number + ' > '
+                print(f'Critical path: {path}')
+                print(f'Mínimo tiempo de ejecución: {min_execution_time}')
+            else:
+                print('No hay ruta crítica')
             graph.print_graph()
         elif (option == '3'):
             activity_num = input('Ingrese el número de la actividad a eliminar: ')
