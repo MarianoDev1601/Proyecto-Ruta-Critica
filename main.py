@@ -1,7 +1,7 @@
 from interface.interface import start
 from classes.activity import Activity
 from classes.graph import Graph
-from scripts.csv import getActivitiesData
+from scripts.csv import delete_activity, getActivitiesData, save_activity
 
 
 def create_activity():
@@ -19,7 +19,7 @@ def create_activity():
 def main():
     # print("----- Programa para calcular la ruta crítica -----")
 
-    graph = Graph()
+    graph:Graph = Graph()
     
     getActivitiesData(graph)
 
@@ -29,21 +29,33 @@ def main():
     #     option = input('''
     #         1. Añadir actividad
     #         2. Encontrar ruta crítica
-    #         3. Ver actividades
-    #         4. Salir
+    #         3. Eliminar actividad
+    #         4. Ver actividades
+    #         5. Salir
     #         >>> ''')
 
     #     if (option == '1'):
-    #         graph.add_activity(create_activity())
+    #         activity:Activity = create_activity()
+    #         graph.add_activity(activity)
+    #         save_activity(activity)
     #     elif (option == '2'):
-    #         crit_path = graph.find_critical_path()
+    #         crit_path, min_execution_time = graph.find_critical_path()
     #         path = ''
-    #         for node in crit_path:
-    #             path += node.number + ' > '
-    #         print(f'Critical path: {path}')
+    #         if (len(crit_path) > 0):
+    #             for node in crit_path:
+    #                 path += node.number + ' > '
+    #             print(f'Critical path: {path}')
+    #             print(f'Mínimo tiempo de ejecución: {min_execution_time}')
+    #         else:
+    #             print('No hay ruta crítica')
     #         graph.print_graph()
     #     elif (option == '3'):
+    #         activity_num = input('Ingrese el número de la actividad a eliminar: ')
+    #         graph.remove_activity(activity_num)
+    #         delete_activity(activity_num)
+    #     elif (option == '4'):
     #         graph.print_graph()
+        
     #     else:
     #         break
 

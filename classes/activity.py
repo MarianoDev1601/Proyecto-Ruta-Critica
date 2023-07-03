@@ -35,3 +35,9 @@ class Activity:
     def update_late_dates(self, lfd:float):
         self.lfd = lfd
         self.lsd = self.lfd - self.duration
+
+    def reset(self):
+        self.esd:float = None
+        self.efd:float = None
+        self.lsd:float = None
+        self.lfd:float = None

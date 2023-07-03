@@ -10,7 +10,7 @@ class Graph:
 
     def add_activity(self, act:Activity):
         if act.number in self.nodes:
-            return
+            raise Exception(f"Disculpe, ya existe la actividad número {act.number}")
         
         self.graph[act.number] = []
         self.nodes[act.number] = act
@@ -23,6 +23,8 @@ class Graph:
             pred.add_successor(act.number)
         
     def remove_activity(self, act_number:str):
+        if (act_number not in self.nodes):
+            raise Exception(f"Disculpe, no se encontró la actividad número {act_number}")
         act:Activity = self.nodes[act_number]
         for predecessor in act.predecessors:
             pred:Activity = self.nodes[predecessor]
@@ -34,7 +36,9 @@ class Graph:
         self.graph.pop(act_number)
 
     def find_critical_path(self):
-        
+        #Limpiamos la data almacenada de las actividades
+        self.restart_activities()
+        #Obtenemos la actividad origen y final
         self.final_activity = self.find_final_activities()
         self.init_activity = self.find_initial_activities()
 
@@ -45,11 +49,13 @@ class Graph:
 
         # Encontrar actividades en la ruta crítica
         critical_path = []
+        min_execution_time = 0
         for activity in self.nodes.values():
-            if activity.get_holgura() == 0:
+            if activity.duration > 0 and activity.get_holgura() == 0:
+                min_execution_time += activity.duration
                 critical_path.append(activity)
 
-        return critical_path
+        return critical_path, min_execution_time
 
     def calculate_early_dates(self):
         initial_activity = self.init_activity
@@ -115,6 +121,10 @@ class Graph:
             return final_activity
         else:
             return final_activities[0]
+
+    def restart_activities(self):
+        for act in self.nodes.values():
+            act.reset()
 
     def print_graph(self):
             for activity in self.nodes.values():
