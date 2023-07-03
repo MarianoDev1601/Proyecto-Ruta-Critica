@@ -1,7 +1,7 @@
 
 from classes.activity import Activity
 from classes.graph import Graph
-from scripts.csv import getActivitiesData, save_activity
+from scripts.csv import delete_activity, getActivitiesData, save_activity
 
 
 def create_activity():
@@ -27,8 +27,9 @@ def main():
         option = input('''
             1. Añadir actividad
             2. Encontrar ruta crítica
-            3. Ver actividades
-            4. Salir
+            3. Eliminar actividad
+            4. Ver actividades
+            5. Salir
             >>> ''')
 
         if (option == '1'):
@@ -43,7 +44,12 @@ def main():
             print(f'Critical path: {path}')
             graph.print_graph()
         elif (option == '3'):
+            activity_num = input('Ingrese el número de la actividad a eliminar: ')
+            graph.remove_activity(activity_num)
+            delete_activity(activity_num)
+        elif (option == '4'):
             graph.print_graph()
+        
         else:
             break
 

@@ -37,8 +37,18 @@ def save_activity(activity: Activity):
     # Guardar el DataFrame actualizado en el archivo Excel
     updated_data_frame.to_excel("data/activitiesData.xlsx", index=False)
 
+def delete_activity(activity_number):
+    # Leer el archivo de Excel
+    data_frame = pd.read_excel("data/activitiesData.xlsx", header=0, converters={'number': str, 'description': str, 'duration': float, 'predecessors': str})
 
+    # Encontrar el índice de la fila que coincide con el número de actividad
+    index_to_drop = data_frame[data_frame['number'] == activity_number].index
 
+    # Eliminar la fila utilizando el índice
+    updated_data_frame = data_frame.drop(index_to_drop)
+
+    # Guardar el DataFrame actualizado en el archivo Excel
+    updated_data_frame.to_excel("data/activitiesData.xlsx", index=False)
 
 
 
