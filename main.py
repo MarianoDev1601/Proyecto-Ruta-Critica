@@ -1,7 +1,7 @@
 
 from classes.activity import Activity
 from classes.graph import Graph
-from scripts.csv import getActivitiesData
+from scripts.csv import getActivitiesData, save_activity
 
 
 def create_activity():
@@ -32,7 +32,9 @@ def main():
             >>> ''')
 
         if (option == '1'):
-            graph.add_activity(create_activity())
+            activity:Activity = create_activity()
+            graph.add_activity(activity)
+            save_activity(activity)
         elif (option == '2'):
             crit_path = graph.find_critical_path()
             path = ''

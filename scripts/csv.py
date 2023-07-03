@@ -1,7 +1,6 @@
 import pandas as pd
-
-from classes.graph import Graph
 from classes.activity import Activity
+from classes.graph import Graph
 
 
 def getActivitiesData(graph: Graph):
@@ -20,5 +19,28 @@ def getActivitiesData(graph: Graph):
             predList = []
         graph.add_activity(Activity(number, description, duration, predList))
 
-# def save_activity(activity):
-#     pd.
+def save_activity(activity: Activity):
+    # Leer el archivo de Excel existente
+    data_frame = pd.read_excel("data/activitiesData.xlsx", header=0, converters={'number': str, 'description': str, 'duration': float, 'predecessors': str})
+
+    # Crear un nuevo DataFrame con los datos de la actividad
+    new_data = pd.DataFrame({
+        'number': [activity.number],
+        'description': [activity.description],
+        'duration': [activity.duration],
+        'predecessors': [','.join(activity.predecessors)]
+    })
+
+    # Combinar los datos existentes con los nuevos datos
+    updated_data_frame = pd.concat([data_frame, new_data], ignore_index=True)
+
+    # Guardar el DataFrame actualizado en el archivo Excel
+    updated_data_frame.to_excel("data/activitiesData.xlsx", index=False)
+
+
+
+
+
+
+
+
