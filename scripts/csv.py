@@ -1,7 +1,7 @@
 import pandas as pd
 
 from classes.graph import Graph
-from classes.node import Node
+from classes.activity import Node
 
 
 def getNodesData(graph: Graph):
