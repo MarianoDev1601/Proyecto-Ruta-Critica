@@ -19,22 +19,27 @@ class Graph:
             if predecessor not in self.graph:
                 self.graph[predecessor] = []
             self.graph[predecessor].append(act)
-            self.nodes[predecessor]:Activity.add_successor(act)
-        print(self.nodes)
+            pred:Activity = self.nodes[predecessor]
+            pred.add_successor(act.number)
         
     def remove_activity(self, act_number:str):
         act:Activity = self.nodes[act_number]
         for predecessor in act.predecessors:
-            self.nodes[predecessor]:Activity.remove_successor(act_number)
+            pred:Activity = self.nodes[predecessor]
+            pred.remove_successor(act_number)
         for successor in act.successors:
-            self.nodes[successor]:Activity.remove_predecessor(act_number)
+            suc:Activity = self.nodes[successor]
+            suc.remove_predecessor(act_number)
         self.nodes.pop(act_number)
         self.graph.pop(act_number)
 
     def find_critical_path(self):
+        
+        self.final_activity = self.find_final_activities()
+        self.init_activity = self.find_initial_activities()
+
         # Realizar cálculo de fechas tempranas
         self.calculate_early_dates()
-
         # Realizar cálculo de fechas tardías
         self.calculate_late_dates()
 
@@ -47,8 +52,9 @@ class Graph:
         return critical_path
 
     def calculate_early_dates(self):
-        initial_activity = self.find_initial_activity()
+        initial_activity = self.init_activity
         initial_activity.update_early_dates(0)
+        self.nodes[initial_activity.number] = initial_activity
         self.calculate_early_dates_recursive(initial_activity)
 
     def calculate_early_dates_recursive(self, activity):
@@ -56,11 +62,13 @@ class Graph:
             successor_activity = self.nodes[successor]
             if successor_activity.esd is None or successor_activity.esd < activity.efd:
                 successor_activity.update_early_dates(activity.efd)
+                self.nodes[successor_activity.number] = successor_activity
                 self.calculate_early_dates_recursive(successor_activity)
 
     def calculate_late_dates(self):
-        final_activity = self.find_final_activity()
+        final_activity = self.final_activity
         final_activity.update_late_dates(final_activity.efd)
+        self.nodes[final_activity.number] = final_activity
         self.calculate_late_dates_recursive(final_activity)
 
     def calculate_late_dates_recursive(self, activity):
@@ -68,52 +76,56 @@ class Graph:
             predecessor_activity = self.nodes[predecessor]
             if predecessor_activity.lfd is None or predecessor_activity.lfd > activity.lsd:
                 predecessor_activity.update_late_dates(activity.lsd)
+                self.nodes[predecessor_activity.number] = predecessor_activity
                 self.calculate_late_dates_recursive(predecessor_activity)
 
-    def find_initial_activity(self):
+    def find_initial_activities(self):
+        initial_activities = []
         for activity in self.nodes.values():
             if not activity.predecessors:
-                self.init_activity = activity
-                return activity
+                initial_activities.append(activity)
+        if len(initial_activities) == 0:
+            # No se encontró ningún nodo sin predecesores
+            raise Exception("No se encontró ninguna actividad inicial.")
+        elif len(initial_activities) > 1:
+            # Crear una actividad adicional como nodo inicial
+            initial_activity = Activity("0", "Nodo Inicial", 0)
+            for activity in initial_activities:
+                initial_activity.add_successor(activity.number)
+                activity.add_predecessor(initial_activity.number)
+            self.add_activity(initial_activity)
+            return initial_activity
+        else:
+            return initial_activities[0]
 
-    def find_final_activity(self):
+    def find_final_activities(self):
+        final_activities = []
         for activity in self.nodes.values():
             if not activity.successors:
-                self.final_activity = activity
-                return activity
+                final_activities.append(activity)
+        if len(final_activities) == 0:
+            # No se encontró ningún nodo sin sucesores
+            raise Exception("No se encontró ninguna actividad final.")
+        elif len(final_activities) > 1:
+            # Crear una actividad adicional como nodo final
+            final_activity = Activity("999", "Nodo Final", 0)
+            for activity in final_activities:
+                final_activity.add_predecessor(activity.number)
+            self.add_activity(final_activity)
+            return final_activity
+        else:
+            return final_activities[0]
 
-
-    # def find_critical_path(self):
-    #     # Inicializar las fechas tempranas de inicio y finalización de las actividades
-    #     for node in self.nodes.values():
-    #         node.update_early_dates(0.0)
-
-    #     # Calcular la duración mínima del proyecto
-    #     duration_min = 0.0
-    #     for node in self.nodes.values():
-    #         if node.successors:
-    #             for successor_num in node.successors:
-    #                 successor:Activity = self.nodes[successor_num]
-    #                 if successor.esd is None or successor.esd < node.efd:
-    #                     successor.update_early_dates(node.efd)
-    #                     self.nodes[successor_num] = successor
-    #             duration_min = max(duration_min, node.efd)
-
-    #      # Inicializar las fechas tardías de inicio y finalización de las actividades
-    #     for node in self.nodes.values():
-    #         node.update_late_dates(duration_min - node.duration)
-
-    #     # Calcular las fechas tardías de inicio y finalización de las actividades
-    #     for node in reversed(list(self.nodes.values())):
-    #         if node.successors:
-    #             for successor_number in node.successors:
-    #                 successor = self.nodes[successor_number]
-    #                 if node.lfd is None:
-    #                     node.update_late_dates(successor.lsd - node.duration)
-    #                 else:
-    #                     node.update_late_dates(min(node.lfd, successor.lsd - node.duration))
-
-    #     # Encontrar las actividades críticas
-    #     critical_activities = [node for node in self.nodes.values() if node.get_holgura() == 0]
-
-    #     return duration_min, critical_activities
+    def print_graph(self):
+            for activity in self.nodes.values():
+                print(f"Activity: {activity.number}")
+                print(f"Description: {activity.description}")
+                print(f"Duration: {activity.duration}")
+                print("Predecessors:", activity.predecessors)
+                print("Successors:", activity.successors)
+                print(f"ESD: {activity.esd}")
+                print(f"EFD: {activity.efd}")
+                print(f"LSD: {activity.lsd}")
+                print(f"LFD: {activity.lfd}")
+                print("Holgura:", activity.get_holgura())
+                print("-----------------------")
