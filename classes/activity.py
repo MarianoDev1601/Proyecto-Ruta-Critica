@@ -12,7 +12,7 @@ class Activity:
 
     def get_holgura(self):
         if (self.esd is not None):
-            return self.esd - self.lsd
+            return self.lsd - self.esd
         else:
             return None
     

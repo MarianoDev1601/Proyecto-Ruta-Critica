@@ -87,6 +87,8 @@ class Graph:
 
     def find_initial_activities(self):
         initial_activities = []
+        if '0' in self.nodes:
+                self.remove_activity('0')
         for activity in self.nodes.values():
             if not activity.predecessors:
                 initial_activities.append(activity)
@@ -95,8 +97,6 @@ class Graph:
             raise Exception("No se encontró ninguna actividad inicial.")
         elif len(initial_activities) > 1:
             # Crear una actividad adicional como nodo inicial
-            if '0' in self.nodes:
-                self.remove_activity('0')
             initial_activity = Activity("0", "Nodo Inicial", 0, predecessors=[])
             neighbors = []
             for activity in initial_activities:
@@ -111,6 +111,10 @@ class Graph:
 
     def find_final_activities(self):
         final_activities = []
+
+        if '999' in self.nodes:
+                self.remove_activity('999')
+
         for activity in self.nodes.values():
             if not activity.successors:
                 final_activities.append(activity)
@@ -119,8 +123,6 @@ class Graph:
             raise Exception("No se encontró ninguna actividad final.")
         elif len(final_activities) > 1:
             # Crear una actividad adicional como nodo final
-            if '999' in self.nodes:
-                self.remove_activity('999')
             final_activity = Activity("999", "Nodo Final", 0, predecessors=[])
             for activity in final_activities:
                 final_activity.add_predecessor(activity.number)
