@@ -287,6 +287,10 @@ def start(graph: Graph):
     right_frame = ttk.Frame(interface, style="TFrame")
     right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
     
+    # Configuración de expansión de filas y columnas
+    interface.grid_rowconfigure(0, weight=1)
+    interface.grid_columnconfigure(1, weight=1)
+
     #Construcción lado izquierdo
     add = ttk.Button(left_frame, text="Añadir nueva tarea", style="TButton", command=lambda: addActivity(graph))
     add.grid(row=1, column=0, pady=(10,30), columnspan=2, sticky="ew")
