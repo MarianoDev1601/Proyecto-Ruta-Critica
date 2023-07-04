@@ -248,7 +248,7 @@ def addActivity(graph: Graph):
     
     predecessorsL = ttk.Label(activityInterface, text="Predecesores:", style="TLabel", font=("Arial", 18), background="orange")
     predecessorsL.grid(row=3, column=1, padx=10)
-    predecessorsIn = ttk.Combobox(activityInterface, values=activityList, font=("Arial", 18))
+    predecessorsIn = ttk.Combobox(activityInterface, values=activityList, font=("Arial", 18), state="readonly")
     predecessorsIn.grid(row=4, column=1, padx=(10,5), pady=(5,25), sticky="ew")
     addPredecessorB = ttk.Button(activityInterface, text="+", style="TButton", command=lambda:addPredecessor(predecessors, predecessorsIn))
     addPredecessorB.grid(row=4, column=2, pady=(5,25), padx=(5,10))
@@ -293,7 +293,7 @@ def start(graph: Graph):
     add = ttk.Button(left_frame, text="Añadir nueva tarea", style="TButton", command=lambda: addActivity(graph))
     add.grid(row=1, column=0, pady=(10,30), columnspan=2, sticky="ew")
     
-    removeIn = ttk.Combobox(left_frame, values=activityList)
+    removeIn = ttk.Combobox(left_frame, values=activityList, state="readonly")
     removeIn.grid(row=2, column=0, padx=(10,5), pady=(5, 30))
     remove = ttk.Button(left_frame, text="Eliminar tarea", style="TButton", command=lambda: removeAc(graph, removeIn))
     remove.grid(row=2, column=1, pady=(5, 30))
