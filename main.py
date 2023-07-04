@@ -54,7 +54,7 @@ def main():
         elif (option == '3'):
             activity_num = input('Ingrese el número de la actividad a eliminar: ')
             graph.remove_activity(activity_num)
-            delete_activity(activity_num)
+            # delete_activity(activity_num)
         elif (option == '4'):
             graph.print_graph()
         

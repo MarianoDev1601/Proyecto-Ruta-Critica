@@ -28,6 +28,8 @@ class Graph:
         act:Activity = self.nodes[act_number]
         for predecessor in act.predecessors:
             pred:Activity = self.nodes[predecessor]
+            neighbors:list = self.graph[pred.number]
+            neighbors.remove(act)
             pred.remove_successor(act_number)
         for successor in act.successors:
             suc:Activity = self.nodes[successor]
@@ -60,13 +62,14 @@ class Graph:
     def calculate_early_dates(self):
         initial_activity = self.init_activity
         initial_activity.update_early_dates(0)
-        self.nodes[initial_activity.number] = initial_activity
         self.calculate_early_dates_recursive(initial_activity)
 
     def calculate_early_dates_recursive(self, activity):
         for successor in activity.successors:
             successor_activity = self.nodes[successor]
             if successor_activity.esd is None or successor_activity.esd < activity.efd:
+                print(f'Activity: {activity.number} - {activity.esd} - {activity.efd}')
+                print(f'Successor: {successor_activity.number} - {successor_activity.esd} - {successor_activity.efd}')
                 successor_activity.update_early_dates(activity.efd)
                 self.nodes[successor_activity.number] = successor_activity
                 self.calculate_early_dates_recursive(successor_activity)
@@ -74,7 +77,6 @@ class Graph:
     def calculate_late_dates(self):
         final_activity = self.final_activity
         final_activity.update_late_dates(final_activity.efd)
-        self.nodes[final_activity.number] = final_activity
         self.calculate_late_dates_recursive(final_activity)
 
     def calculate_late_dates_recursive(self, activity):
@@ -97,7 +99,7 @@ class Graph:
             # Crear una actividad adicional como nodo inicial
             if '0' in self.nodes:
                 self.remove_activity('0')
-            initial_activity = Activity("0", "Nodo Inicial", 0)
+            initial_activity = Activity("0", "Nodo Inicial", 0, predecessors=[])
             for activity in initial_activities:
                 initial_activity.add_successor(activity.number)
                 activity.add_predecessor(initial_activity.number)
@@ -118,7 +120,7 @@ class Graph:
             # Crear una actividad adicional como nodo final
             if '999' in self.nodes:
                 self.remove_activity('999')
-            final_activity = Activity("999", "Nodo Final", 0)
+            final_activity = Activity("999", "Nodo Final", 0, predecessors=[])
             for activity in final_activities:
                 final_activity.add_predecessor(activity.number)
             self.add_activity(final_activity)
@@ -127,6 +129,8 @@ class Graph:
             return final_activities[0]
 
     def restart_activities(self):
+        self.init_activity = None
+        self.final_activity = None
         for act in self.nodes.values():
             act.reset()
 
