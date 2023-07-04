@@ -107,6 +107,9 @@ def drawGraphNX(graph: Graph, criticalPath: list):
     # Dibujar las etiquetas de las aristas
     nx.draw_networkx_edge_labels(g, posNX, edge_labels=edge_labels, font_color='black', font_size=10, font_family='Arial')
    
+    for widget in right_frame.winfo_children():
+            widget.destroy()
+   
     # Agregar el canvas al lado derecho
     canvas = FigureCanvasTkAgg(plt.gcf(), master = right_frame)
     canvas.draw()
@@ -128,23 +131,23 @@ def upgradePredecessors(graph: Graph):
         activityList.append(activity.number)
     
 def upgradePath(graph:Graph):
-    pathT = ""
-    index = 0
-    pathR, min = Graph.find_critical_path(graph)
+    # pathT = ""
+    # index = 0
+    # pathR, min = Graph.find_critical_path(graph)
     
-    for act in pathR: 
-        if index < pathR.count():
-            pathT += act + "--->"
-            index += 1
-        else:
-            pathT += act
+    # for act in pathR: 
+    #     if index < pathR.count():
+    #         pathT += act + "--->"
+    #         index += 1
+    #     else:
+    #         pathT += act
             
-    if pathT == "":
-        path["text"] = "Ruta crítica no encontrada."
-    else:
-        path["text"] = pathT
+    # if pathT == "":
+    #     path["text"] = "No existe."
+    # else:
+    #     path["text"] = pathT
     
-    
+    pathR = []
     drawGraphNX(graph, pathR)
 
 def addAc(graph: Graph, numberIn, descriptionIn, durationIn, predecessorsList):
@@ -154,13 +157,14 @@ def addAc(graph: Graph, numberIn, descriptionIn, durationIn, predecessorsList):
     if (numberIn.get() not in nodeList):
         if (descriptionIn.get() != ""):
             try:
+                act = Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList)
                 print(numberIn.get())
-                Graph.add_activity(graph, Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
+                Graph.add_activity(graph, act)
                 upgradePredecessors(graph)
                 removeIn['values']=activityList
                 removeIn.set("")
                 activityInterface.destroy()
-                #save_activity(Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
+                save_activity(act)
                 upgradePath(graph)
                 
             except ValueError:
@@ -180,6 +184,15 @@ def removeAc(graph:Graph, act):
         upgradePath(graph)
     else:
         messagebox.showerror("Error", "Seleccione la actividad a eliminar.")
+        
+def write(graph:Graph):
+    Graph.print_graph(graph)
+    suck = ""
+    activities = Graph.write_graph(graph)
+    for activity in activities:
+       suck += activity
+    write = ttk.Label(left_frame, text=suck, style="TLabel")
+    write.grid(row=7, column=0,)
 
 def addActivity(graph: Graph):
     global activityInterface, predecessorsIn
@@ -188,35 +201,39 @@ def addActivity(graph: Graph):
     # Crear ventana para añadir actividades
     activityInterface = tk.Tk()
     activityInterface.title("Añadir actividad")
-    # addActivity.configure(bg="gray")
+    activityInterface.configure(bg="orange")
+    separator = ttk.Label(activityInterface, text= "", background="orange")
+    separator.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
     
     # Construcción de la ventana   
-    number = ttk.Label(activityInterface, text="Número:", style="TLabel")
-    number.grid(row=0, column=0, padx=10)
-    numberIn= ttk.Spinbox(activityInterface, from_=1, to=1000)
-    numberIn.grid(row=1, column=0, padx=10, pady=(5,15))
+    number = ttk.Label(activityInterface, text="Número:", style="TLabel", font=("Arial", 18), background="orange")
+    number.grid(row=1, column=0, padx=10)
+    numberIn= ttk.Spinbox(activityInterface, from_=1, to=1000, font=("Arial", 18))
+    numberIn.grid(row=2, column=0, padx=10, pady=(5,25))
      
-    description = ttk.Label(activityInterface, text="Descripción:", style="TLabel")
-    description.grid(row=0, column=1, padx=10)
-    descriptionIn = ttk.Entry(activityInterface)
-    descriptionIn.grid(row=1, column=1, padx=10, pady=(5,15))
+    description = ttk.Label(activityInterface, text="Descripción:", style="TLabel", font=("Arial", 18), background="orange")
+    description.grid(row=1, column=1, padx=10)
+    descriptionIn = ttk.Entry(activityInterface, font=("Arial", 18))
+    descriptionIn.grid(row=2, column=1, padx=10, pady=(5,25))
+    descriptionIn.configure(font=("Arial", 18))
     
-    duration = ttk.Label(activityInterface, text="Duración:", style="TLabel")
-    duration.grid(row=2, column=0, padx=10)
-    durationIn= ttk.Spinbox(activityInterface, from_=1, to=1000)
-    durationIn.grid(row=3, column=0, padx=10, pady=(5,15))
+    duration = ttk.Label(activityInterface, text="Duración:", style="TLabel", font=("Arial", 18), background="orange")
+    duration.grid(row=3, column=0, padx=10)
+    durationIn= ttk.Spinbox(activityInterface, from_=1, to=1000, font=("Arial", 18))
+    durationIn.grid(row=4, column=0, padx=10, pady=(5,25))
     
     predecessors = []
     
-    predecessorsL = ttk.Label(activityInterface, text="Predecesores:", style="TLabel")
-    predecessorsL.grid(row=2, column=1, padx=10)
-    predecessorsIn = ttk.Combobox(activityInterface, values=activityList)
-    predecessorsIn.grid(row=3, column=1, padx=(10,5), pady=(5,15))
-    addPredecessorB = ttk.Button(activityInterface, text="Añadir", style="TButton", command=lambda:addPredecessor(predecessors, predecessorsIn))
-    addPredecessorB.grid(row=3, column=2, pady=(5,15))
+    predecessorsL = ttk.Label(activityInterface, text="Predecesores:", style="TLabel", font=("Arial", 18), background="orange")
+    predecessorsL.grid(row=3, column=1, padx=10)
+    predecessorsIn = ttk.Combobox(activityInterface, values=activityList, font=("Arial", 18))
+    predecessorsIn.grid(row=4, column=1, padx=(10,5), pady=(5,25), sticky="ew")
+    addPredecessorB = ttk.Button(activityInterface, text="+", style="TButton", command=lambda:addPredecessor(predecessors, predecessorsIn))
+    addPredecessorB.grid(row=4, column=2, pady=(5,25), padx=(5,10))
+    addPredecessorB.configure(width = 3)
     
-    add = ttk.Button(activityInterface, text="Añadir", style="TButton", command=lambda:addAc(graph, numberIn, descriptionIn, durationIn, predecessors))
-    add.grid(row=4, column=0, pady=10, columnspan=3)
+    add = ttk.Button(activityInterface, text="Añadir Tarea", style="TButton", command=lambda:addAc(graph, numberIn, descriptionIn, durationIn, predecessors))
+    add.grid(row=5, column=0, pady=30, columnspan=3)
     
     
     activityInterface.mainloop()
@@ -231,9 +248,10 @@ def start(graph: Graph):
     interface.configure(bg="orange")
 
     style = ttk.Style()
-    style.configure("TLabel", font=("Arial", 12), background="orange")
-    style.configure("TButton", font=("Arial", 12))
+    style.configure("TLabel", font=("Arial", 16), background="orange")
+    style.configure("TButton", font=("Arial", 18), bg= "orange")
     style.configure("TFrame", background="orange")
+    style.configure("TSeparator", background="orange")
 
     # Lado izquierdo
     left_frame = ttk.Frame(interface, style="TFrame")
@@ -249,12 +267,12 @@ def start(graph: Graph):
     
     #Construcción lado izquierdo
     add = ttk.Button(left_frame, text="Añadir nueva tarea", style="TButton", command=lambda: addActivity(graph))
-    add.grid(row=1, column=0, pady=10, columnspan=2,)
+    add.grid(row=1, column=0, pady=(10,30), columnspan=2, sticky="ew")
     
     removeIn = ttk.Combobox(left_frame, values=activityList)
-    removeIn.grid(row=2, column=0, padx=(10,5))
+    removeIn.grid(row=2, column=0, padx=(10,5), pady=(5, 30))
     remove = ttk.Button(left_frame, text="Eliminar tarea", style="TButton", command=lambda: removeAc(graph, removeIn))
-    remove.grid(row=2, column=1,)
+    remove.grid(row=2, column=1, pady=(5, 30))
     
     pathL = ttk.Label(left_frame, text="Ruta Crítica:", style="TLabel")
     pathL.grid(row=3, column=0, columnspan=4, pady=10)
@@ -262,9 +280,12 @@ def start(graph: Graph):
     path = ttk.Label(left_frame, text="No encontrada.", style="TLabel")
     path.grid(row=4, column=0, columnspan=4, pady=10)
     
-    print = ttk.Button(left_frame, text="Imprimir", style="TButton", command=lambda: Graph.print_graph(graph))
-    print.grid(row=6, column=0,)
+    # print = ttk.Button(left_frame, text="Imprimir", style="TButton", command=lambda: write(graph))
+    # print.grid(row=6, column=0,)
     
-    upgradePath(graph)
+    try:
+        upgradePath(graph)
+    except:
+        print("Grafo vacio")
     
     interface.mainloop()

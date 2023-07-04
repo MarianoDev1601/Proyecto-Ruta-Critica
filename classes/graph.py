@@ -143,3 +143,21 @@ class Graph:
                 print(f"LFD: {activity.lfd}")
                 print("Holgura:", activity.get_holgura())
                 print("-----------------------")
+
+    def write_graph(self):
+        activities = []
+        for activity in self.nodes.values():
+            activitys = ""
+            activitys += f"Activity: {activity.number}" , "\n"
+            activitys += f"Description: {activity.description}" , "\n"
+            activitys += f"Duration: {activity.duration}" , "\n"
+            activitys += "Predecessors:", activity.predecessors, "\n"
+            activitys += "Successors:", activity.successors, "\n"
+            activitys += f"ESD: {activity.esd}", "\n"
+            activitys += f"EFD: {activity.efd}", "\n"
+            activitys += f"LSD: {activity.lsd}", "\n"
+            activitys += f"LFD: {activity.lfd}", "\n"
+            activitys +="Holgura:", str(activity.get_holgura()), "\n"
+            activitys +="-----------------------\n"
+            activities.append(activitys)
+        return activities
