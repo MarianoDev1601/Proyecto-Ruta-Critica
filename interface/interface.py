@@ -214,7 +214,7 @@ def addActivity(graph: Graph):
     # Construcción de la ventana   
     number = ttk.Label(activityInterface, text="Número:", style="TLabel", font=("Arial", 18), background="orange")
     number.grid(row=1, column=0, padx=10)
-    numberIn= ttk.Spinbox(activityInterface, from_=1, to=1000, font=("Arial", 18))
+    numberIn= ttk.Spinbox(activityInterface, from_=1, to=998, font=("Arial", 18))
     numberIn.grid(row=2, column=0, padx=10, pady=(5,25))
      
     description = ttk.Label(activityInterface, text="Descripción:", style="TLabel", font=("Arial", 18), background="orange")
@@ -225,7 +225,7 @@ def addActivity(graph: Graph):
     
     duration = ttk.Label(activityInterface, text="Duración:", style="TLabel", font=("Arial", 18), background="orange")
     duration.grid(row=3, column=0, padx=10)
-    durationIn= ttk.Spinbox(activityInterface, from_=1, to=1000, font=("Arial", 18))
+    durationIn= ttk.Spinbox(activityInterface, from_=1, to=998, font=("Arial", 18))
     durationIn.grid(row=4, column=0, padx=10, pady=(5,25))
     
     predecessors = []
