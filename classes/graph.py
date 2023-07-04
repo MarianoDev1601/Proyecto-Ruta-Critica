@@ -160,7 +160,7 @@ class Graph:
             activitys += f"EFD: {activity.efd}" + " | "
             activitys += f"LSD: {activity.lsd}" + " | "
             activitys += f"LFD: {activity.lfd}" + " | "
-            activitys +="Holgura:" + str(activity.get_holgura()) + "\n\n\n"
+            activitys +="Holgura:" + str(activity.get_holgura()) + "\n\n"
             #activitys +="-----------------------------------------------------------------------------------------\n"
             activities.append(activitys)
         return activities
