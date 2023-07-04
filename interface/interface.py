@@ -17,19 +17,22 @@ def drawGraphNXa(graph: Graph):
     for node, predecessors in graph.graph.items():
         for predecessor in predecessors:
             g.add_edge(node, predecessor)
+          
+    plt.clf()  
     # Dibujar el grafo
-    nx.draw(g, with_labels=True, node_color='lightblue', node_size=500,
-            font_size=10, edge_color='gray', width=1, alpha=0.7)
+    nx.draw(g, with_labels=True, node_color='lightblue', node_size=500, font_size=10, edge_color='gray', width=1, alpha=0.7)
 
     # Etiquetas de las aristas
     labels = nx.get_edge_attributes(g, 'duration')
-    nx.draw_networkx_edge_labels(
-        g, pos=nx.spring_layout(g, seed=900), edge_labels=labels)
+    nx.draw_networkx_edge_labels(g, pos=nx.spring_layout(g, seed=900), edge_labels=labels)
 
-    # Mostrar el gráfico
-    plt.show()
+    # Agregar el canvas al lado derecho
+    canvas = FigureCanvasTkAgg(plt.gcf(), master = right_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
     return
     # graph.graph['1'][0].description
+    
 def drawGraph(graph):
     g = nx.DiGraph()
     for node,neighbors in graph.graph.items():
@@ -37,8 +40,13 @@ def drawGraph(graph):
         for neighbor in neighbors:
             g.add_edge(node, neighbor.number)
                 
+    plt.clf()
     nx.draw(g, with_labels=True)
-    plt.show()
+    
+    # Agregar el canvas al lado derecho
+    canvas = FigureCanvasTkAgg(plt.gcf(), master = right_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 def drawGraphNX(graph: Graph, criticalPath: list):
     g = nx.DiGraph()
@@ -97,13 +105,12 @@ def drawGraphNX(graph: Graph, criticalPath: list):
             font_size=10, edge_color=colors_criticalEdge, width=1, alpha=0.7)
 
     # Dibujar las etiquetas de las aristas
-    nx.draw_networkx_edge_labels(
-        g, posNX, edge_labels=edge_labels, font_color='black', font_size=10, font_family='Arial')
-    plt.show()
+    nx.draw_networkx_edge_labels(g, posNX, edge_labels=edge_labels, font_color='black', font_size=10, font_family='Arial')
+   
     # Agregar el canvas al lado derecho
-    # canvas = FigureCanvasTkAgg(plt.gcf(), master=right_frame)
-    # canvas.draw()
-    # canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    canvas = FigureCanvasTkAgg(plt.gcf(), master = right_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 def addPredecessor(predecessors, predecessor):
     if (predecessor.get() != ""):
@@ -124,6 +131,7 @@ def upgradePath(graph:Graph):
     pathT = ""
     index = 0
     pathR, min = Graph.find_critical_path(graph)
+    
     for act in pathR: 
         if index < pathR.count():
             pathT += act + "--->"
@@ -131,6 +139,8 @@ def upgradePath(graph:Graph):
         else:
             pathT += act
     path["text"] = pathT
+    
+    drawGraphNX(graph, pathR)
 
 def addAc(graph: Graph, numberIn, descriptionIn, durationIn, predecessorsList):
     nodeList = []
@@ -145,7 +155,8 @@ def addAc(graph: Graph, numberIn, descriptionIn, durationIn, predecessorsList):
                 removeIn.set("")
                 activityInterface.destroy()
                 save_activity(Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
-                upgradePath(path)
+                upgradePath(graph)
+                
             except ValueError:
                 messagebox.showerror("Error", "Indique la duración de la actividad")
         else:
@@ -160,7 +171,7 @@ def removeAc(graph:Graph, act):
         removeIn['values']=activityList
         removeIn.set("")
         delete_activity(act.get())
-        upgradePath(path)
+        upgradePath(graph)
     else:
         messagebox.showerror("Error", "Seleccione la actividad a eliminar.")
 
@@ -227,7 +238,7 @@ def start(graph: Graph):
     title.grid(row=0, column=0, columnspan=4, pady=10)
     
     # Lado derecho
-    right_frame = ttk.Frame(interface)
+    right_frame = ttk.Frame(interface, style="TFrame")
     right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
     
     #Construcción lado izquierdo
