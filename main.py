@@ -22,10 +22,10 @@ def main():
     graph:Graph = Graph()
     
     getActivitiesData(graph)
-    crit_path,minTime = graph.find_critical_path()
+    #crit_path,minTime = graph.find_critical_path()
     # print(crit_path)
-    drawGraphNX(graph, crit_path)
-    # start(graph)
+    #drawGraphNX(graph, crit_path)
+    start(graph)
     
     # while True:
     #     option = input('''

@@ -153,16 +153,14 @@ class Graph:
         activities = []
         for activity in self.nodes.values():
             activitys = ""
-            activitys += f"Activity: {activity.number}" , "\n"
-            activitys += f"Description: {activity.description}" , "\n"
-            activitys += f"Duration: {activity.duration}" , "\n"
-            activitys += "Predecessors:", activity.predecessors, "\n"
-            activitys += "Successors:", activity.successors, "\n"
-            activitys += f"ESD: {activity.esd}", "\n"
-            activitys += f"EFD: {activity.efd}", "\n"
-            activitys += f"LSD: {activity.lsd}", "\n"
-            activitys += f"LFD: {activity.lfd}", "\n"
-            activitys +="Holgura:", str(activity.get_holgura()), "\n"
-            activitys +="-----------------------\n"
+            activitys += f"Activity: {activity.number}" + "\n"
+            activitys += f"Description: {activity.description}" + " | "
+            activitys += f"Duration: {activity.duration}" + " | "
+            activitys += f"ESD: {activity.esd}" + " | "
+            activitys += f"EFD: {activity.efd}" + " | "
+            activitys += f"LSD: {activity.lsd}" + " | "
+            activitys += f"LFD: {activity.lfd}" + " | "
+            activitys +="Holgura:" + str(activity.get_holgura()) + "\n\n\n"
+            #activitys +="-----------------------------------------------------------------------------------------\n"
             activities.append(activitys)
         return activities

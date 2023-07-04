@@ -117,11 +117,13 @@ def drawGraphNX(graph: Graph, criticalPath: list):
     nx.draw_networkx_labels(g, pos=posNX, labels=labels, horizontalalignment= 'right', verticalalignment= 'bottom', font_size=10, font_color='blue', font_family='Arial')
     # nx.draw_networkx_edge_labels(
     #     g, posNX, font_color='black', font_size=10, font_family='Arial')
-    plt.show()
+
+    for widget in right_frame.winfo_children():
+        widget.destroy()
     # Agregar el canvas al lado derecho
-    # canvas = FigureCanvasTkAgg(plt.gcf(), master=right_frame)
-    # canvas.draw()
-    # canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=right_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 def addPredecessor(predecessors, predecessor):
     if (predecessor.get() != ""):
@@ -139,13 +141,13 @@ def upgradePredecessors(graph: Graph):
         activityList.append(activity.number)
     
 def upgradePath(graph:Graph):
-    # pathT = ""
-    # index = 0
-    # pathR, min = Graph.find_critical_path(graph)
+    pathT = ""
+    index = 1
+    pathR, min = Graph.find_critical_path(graph)
     
     # for act in pathR: 
-    #     if index < pathR.count():
-    #         pathT += act + "--->"
+    #     if index <= len(pathR):
+    #         pathT += str(act.number) + "--->"
     #         index += 1
     #     else:
     #         pathT += act
@@ -155,7 +157,6 @@ def upgradePath(graph:Graph):
     # else:
     #     path["text"] = pathT
     
-    pathR = []
     drawGraphNX(graph, pathR)
 
 def addAc(graph: Graph, numberIn, descriptionIn, durationIn, predecessorsList):
@@ -194,13 +195,17 @@ def removeAc(graph:Graph, act):
         messagebox.showerror("Error", "Seleccione la actividad a eliminar.")
         
 def write(graph:Graph):
-    Graph.print_graph(graph)
-    suck = ""
+    writeInterface = tk.Tk()
+    writeInterface.title("Información de los Nodos")
+    writeInterface.configure(bg="orange")
+    separator = ttk.Label(writeInterface, text= "", background="orange")
+    separator.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
+    text = ""
     activities = Graph.write_graph(graph)
     for activity in activities:
-       suck += activity
-    write = ttk.Label(left_frame, text=suck, style="TLabel")
-    write.grid(row=7, column=0,)
+       text += activity
+    write = ttk.Label(writeInterface, text=text, style="TLabel", background="orange", font=("Arial", 20))
+    write.grid(row=1, column=0, padx=15)
 
 def addActivity(graph: Graph):
     global activityInterface, predecessorsIn
@@ -282,18 +287,16 @@ def start(graph: Graph):
     remove = ttk.Button(left_frame, text="Eliminar tarea", style="TButton", command=lambda: removeAc(graph, removeIn))
     remove.grid(row=2, column=1, pady=(5, 30))
     
-    pathL = ttk.Label(left_frame, text="Ruta Crítica:", style="TLabel")
-    pathL.grid(row=3, column=0, columnspan=4, pady=10)
+    print = ttk.Button(left_frame, text="Ver información de los nodos", style="TButton", command=lambda: write(graph))
+    print.grid(row=3, column=0, columnspan=2, sticky="ew", pady=10)
     
-    path = ttk.Label(left_frame, text="No encontrada.", style="TLabel")
-    path.grid(row=4, column=0, columnspan=4, pady=10)
+    pathL = ttk.Label(left_frame, text="Leyenda:", style="TLabel", anchor='w')
+    pathL.grid(row=4, column=0, pady=10)
     
-    # print = ttk.Button(left_frame, text="Imprimir", style="TButton", command=lambda: write(graph))
-    # print.grid(row=6, column=0,)
+    path = ttk.Label(left_frame, text="Nodo verde: Actividad Inicial\nNodo Mordado: Actividad Final\nNodo Rojo: Pertenece a la Ruta Crítica", style="TLabel")
+    path.grid(row=5, column=0, columnspan=2)
     
-    try:
-        upgradePath(graph)
-    except:
-        print("Grafo vacio")
+    
+    upgradePath(graph)
     
     interface.mainloop()
