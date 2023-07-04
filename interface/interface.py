@@ -65,14 +65,17 @@ def drawGraphNX(graph: Graph, criticalPath: list):
     # Diccionario para elegir el color de los edges tomados para el camino mas corto
     node_colors_criticalEdge = {}
 
-    # Diccionario para agregarle le peso al camino usado
-    edge_labels = {}
-
+    # Define the label text and positions
+    labels = {}
+    
     for node, neighbors in graph.graph.items():
         
-        for neighbor in neighbors:
-            edge_labels[(node, neighbor.number)] = f"ESD: {neighbor.esd}, EFD: {neighbor.efd}, LSD: {neighbor.lsd}, LFD: {neighbor.lfd}"
         activity = graph.nodes[node]    
+        esd_values = ", ".join([f"{activity.esd}"])
+        efd_values = ", ".join([f"{activity.efd}"])
+        lsd_values = ", ".join([f"{activity.lsd}"])
+        lfd_values = ", ".join([f"{activity.lfd}"])
+        labels[node] = f"ESD: {esd_values}\nEFD: {efd_values}\nLSD: {lsd_values}\nLFD: {lfd_values}\n"
 
         if activity in criticalPath:
             node_colors_criticalPath[node] = 'red'
@@ -102,16 +105,6 @@ def drawGraphNX(graph: Graph, criticalPath: list):
     # Dibujar el grafo
     nx.draw(g, pos=posNX, with_labels=True, node_size=400, node_color=colors_criticalPath,
             font_size=10, edge_color=colors_criticalEdge, width=1, alpha=0.7)
-    # Define the label text and positions
-    labels = {}
-    for node, pos in posNX.items():
-        neighbors = graph.graph.get(node, [])
-        for neighbor in neighbors:
-            esd_values = ", ".join([f"{neighbor.esd}"])
-            efd_values = ", ".join([f"{neighbor.efd}"])
-            lsd_values = ", ".join([f"{neighbor.lsd}"])
-            lfd_values = ", ".join([f"{neighbor.esd}"])
-            labels[node] = f"ESD: {esd_values}\nEFD: {efd_values}\nLSD: {lsd_values}\nLFD: {lfd_values}\n"
 
     # Dibujar las etiquetas de los nodos
     nx.draw_networkx_labels(g, pos=posNX, labels=labels, horizontalalignment= 'right', verticalalignment= 'bottom', font_size=10, font_color='blue', font_family='Arial')
