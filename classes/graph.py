@@ -11,7 +11,7 @@ class Graph:
     def add_activity(self, act:Activity):
         if act.number in self.nodes:
             raise Exception(f"Disculpe, ya existe la actividad número {act.number}")
-        
+
         self.graph[act.number] = []
         self.nodes[act.number] = act
 
@@ -98,10 +98,13 @@ class Graph:
             if '0' in self.nodes:
                 self.remove_activity('0')
             initial_activity = Activity("0", "Nodo Inicial", 0, predecessors=[])
+            neighbors = []
             for activity in initial_activities:
                 initial_activity.add_successor(activity.number)
                 activity.add_predecessor(initial_activity.number)
-            self.add_activity(initial_activity)
+                neighbors.append(activity)
+            self.nodes[initial_activity.number] = initial_activity
+            self.graph[initial_activity.number] = neighbors
             return initial_activity
         else:
             return initial_activities[0]
