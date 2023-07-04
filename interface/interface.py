@@ -1,5 +1,6 @@
 from classes.graph import Graph
 from classes.activity import Activity
+from scripts.csv import *
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
@@ -11,31 +12,63 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 def addPredecessor(predecessors, predecessor):
-    predecessors.append(predecessor.get())
-    activityList.remove(predecessor.get())
-    predecessorsIn['values']=activityList
-    predecessorsIn.set("")
+    if (predecessor.get() != ""):
+        predecessors.append(predecessor.get())
+        activityList.remove(predecessor.get())
+        predecessorsIn['values']=activityList
+        predecessorsIn.set("")
+    else:
+        messagebox.showerror("Error", "Asegurese de seleccionar una actividad.")
 
 def upgradePredecessors(graph: Graph):
     global activityList
     activityList = []
     for activity in graph.nodes.values():
         activityList.append(activity.number)
+    
+def upgradePath(graph:Graph):
+    pathT = ""
+    index = 0
+    pathR, min = Graph.find_critical_path(graph)
+    for act in pathR: 
+        if index < pathR.count():
+            pathT += act + "--->"
+            index += 1
+        else:
+            pathT += act
+    path["text"] = pathT
 
 def addAc(graph: Graph, numberIn, descriptionIn, durationIn, predecessorsList):
     nodeList = []
     for activity in graph.nodes.values():
         nodeList.append(activity.number)
-    if ((numberIn.get() not in nodeList) and descriptionIn.get() != "" and durationIn != ""):
-        Graph.add_activity(graph, Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
+    if (numberIn.get() not in nodeList):
+        if (descriptionIn.get() != ""):
+            try:
+                Graph.add_activity(graph, Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
+                upgradePredecessors(graph)
+                removeIn['values']=activityList
+                removeIn.set("")
+                activityInterface.destroy()
+                save_activity(Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
+                upgradePath(path)
+            except ValueError:
+                messagebox.showerror("Error", "Indique la duración de la actividad")
+        else:
+            messagebox.showerror("Error", "Indique la descripción de la actividad")
     else:
-        messagebox.showerror("Error", "Asegurese de rellenar correctamente todos los campos.")
+        messagebox.showerror("Error", "Ese número de actividad no está disponible")
         
 def removeAc(graph:Graph, act):
-    Graph.remove_activity(graph, act.get())
-    upgradePredecessors(graph)
-    removeIn['values']=activityList
-    removeIn.set("")
+    if (act.get() != ""):
+        Graph.remove_activity(graph, act.get())
+        upgradePredecessors(graph)
+        removeIn['values']=activityList
+        removeIn.set("")
+        delete_activity(act.get())
+        upgradePath(path)
+    else:
+        messagebox.showerror("Error", "Seleccione la actividad a eliminar.")
 
 def addActivity(graph: Graph):
     global activityInterface, predecessorsIn
@@ -78,7 +111,7 @@ def addActivity(graph: Graph):
     activityInterface.mainloop()
 
 def start(graph: Graph):
-    global interface, right_frame, left_frame, removeIn
+    global interface, right_frame, left_frame, removeIn, path
     upgradePredecessors(graph)
    
    # Crear la ventana principal
@@ -108,8 +141,16 @@ def start(graph: Graph):
     add.grid(row=1, column=0, pady=10, columnspan=2,)
     
     removeIn = ttk.Combobox(left_frame, values=activityList)
-    removeIn.grid(row=2, column=0, padx=(10,5),)
+    removeIn.grid(row=2, column=0, padx=(10,5))
     remove = ttk.Button(left_frame, text="Eliminar tarea", style="TButton", command=lambda: removeAc(graph, removeIn))
     remove.grid(row=2, column=1,)
-
+    
+    pathL = ttk.Label(left_frame, text="Ruta Crítica:", style="TLabel")
+    pathL.grid(row=3, column=0, columnspan=4, pady=10)
+    
+    path = ttk.Label(left_frame, text="No encontrada.", style="TLabel")
+    path.grid(row=4, column=0, columnspan=4, pady=10)
+    
+    upgradePath(graph)
+    
     interface.mainloop()
