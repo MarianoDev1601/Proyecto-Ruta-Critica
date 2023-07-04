@@ -286,6 +286,8 @@ def start(graph: Graph):
     # Lado derecho
     right_frame = ttk.Frame(interface, style="TFrame")
     right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+    interface.columnconfigure(1, weight=1) 
+    interface.rowconfigure(0, weight=1)
     
     # Configuración de expansión de filas y columnas
     interface.grid_rowconfigure(0, weight=1)
