@@ -191,14 +191,30 @@ def write(graph:Graph):
     writeInterface = tk.Tk()
     writeInterface.title("Información de los Nodos")
     writeInterface.configure(bg="orange")
-    separator = ttk.Label(writeInterface, text= "", background="orange")
-    separator.grid(row=0, column=0, columnspan=2, pady=10, sticky="ew")
-    text = ""
+    
+    # Crear un Frame para contener el widget de texto desplazable y el Scrollbar
+    frame = ttk.Frame(writeInterface)
+    frame.pack(fill=tk.BOTH, expand=True)
+    
+    # Crear el Scrollbar vertical
+    scrollbar = ttk.Scrollbar(frame)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    
+    # Crear el widget de texto desplazable
+    text = tk.Text(frame, yscrollcommand=scrollbar.set, bg="orange", font=("Arial", 20))
+    text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    
+    # Configurar la relación entre el Scrollbar y el widget de texto desplazable
+    scrollbar.config(command=text.yview)
+    
+    # Obtener el contenido a mostrar en el widget de texto desplazable
     activities = Graph.write_graph(graph)
-    for activity in activities:
-       text += activity
-    write = ttk.Label(writeInterface, text=text, style="TLabel", background="orange", font=("Arial", 20))
-    write.grid(row=1, column=0, padx=15)
+    text_content = '\n'.join(activities)
+    
+    # Insertar el contenido en el widget de texto desplazable
+    text.insert(tk.END, text_content)
+    
+    writeInterface.mainloop()
 
 def addActivity(graph: Graph):
     global activityInterface, predecessorsIn
