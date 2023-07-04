@@ -2,19 +2,20 @@ from interface.interface import start
 from classes.activity import Activity
 from classes.graph import Graph
 from scripts.csv import delete_activity, getActivitiesData, save_activity
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
-def create_activity():
-    number:str = input('Número de actividad: ')
-    desc:str = input('Descripción de actividad: ')
-    duration:float = float(input('Duración de actividad: '))
-    predecessors:str = input('Predecesores separados por coma: ')
-    if predecessors is not None and predecessors != '':
-            predList = predecessors.split(',')
-    else:
-        predList = []
-
-    return Activity(number=number, description=desc, duration=duration, predecessors=predList)
+def drawGraph(graph):
+    g = nx.DiGraph()
+    for node,neighbors in graph.graph.items():
+        g.add_node(node)
+        for neighbor in neighbors:
+            g.add_edge(node, neighbor.number)
+                
+    nx.draw(g, with_labels=True)
+    plt.show()
 
 def main():
     # print("----- Programa para calcular la ruta crítica -----")
@@ -23,7 +24,8 @@ def main():
     
     getActivitiesData(graph)
 
-    start(graph)
+    drawGraph(graph)
+    # start(graph)
     
     # while True:
     #     option = input('''

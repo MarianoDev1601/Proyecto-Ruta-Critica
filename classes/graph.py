@@ -95,6 +95,8 @@ class Graph:
             raise Exception("No se encontró ninguna actividad inicial.")
         elif len(initial_activities) > 1:
             # Crear una actividad adicional como nodo inicial
+            if '0' in self.nodes:
+                self.remove_activity('0')
             initial_activity = Activity("0", "Nodo Inicial", 0)
             for activity in initial_activities:
                 initial_activity.add_successor(activity.number)
@@ -114,6 +116,8 @@ class Graph:
             raise Exception("No se encontró ninguna actividad final.")
         elif len(final_activities) > 1:
             # Crear una actividad adicional como nodo final
+            if '999' in self.nodes:
+                self.remove_activity('999')
             final_activity = Activity("999", "Nodo Final", 0)
             for activity in final_activities:
                 final_activity.add_predecessor(activity.number)
