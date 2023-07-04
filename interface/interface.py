@@ -138,7 +138,12 @@ def upgradePath(graph:Graph):
             index += 1
         else:
             pathT += act
-    path["text"] = pathT
+            
+    if pathT == "":
+        path["text"] = "Ruta crítica no encontrada."
+    else:
+        path["text"] = pathT
+    
     
     drawGraphNX(graph, pathR)
 
@@ -149,12 +154,13 @@ def addAc(graph: Graph, numberIn, descriptionIn, durationIn, predecessorsList):
     if (numberIn.get() not in nodeList):
         if (descriptionIn.get() != ""):
             try:
+                print(numberIn.get())
                 Graph.add_activity(graph, Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
                 upgradePredecessors(graph)
                 removeIn['values']=activityList
                 removeIn.set("")
                 activityInterface.destroy()
-                save_activity(Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
+                #save_activity(Activity(numberIn.get(), descriptionIn.get(), float(durationIn.get()), predecessorsList))
                 upgradePath(graph)
                 
             except ValueError:
@@ -170,7 +176,7 @@ def removeAc(graph:Graph, act):
         upgradePredecessors(graph)
         removeIn['values']=activityList
         removeIn.set("")
-        delete_activity(act.get())
+        #delete_activity(act.get())
         upgradePath(graph)
     else:
         messagebox.showerror("Error", "Seleccione la actividad a eliminar.")
@@ -255,6 +261,9 @@ def start(graph: Graph):
     
     path = ttk.Label(left_frame, text="No encontrada.", style="TLabel")
     path.grid(row=4, column=0, columnspan=4, pady=10)
+    
+    print = ttk.Button(left_frame, text="Imprimir", style="TButton", command=lambda: Graph.print_graph(graph))
+    print.grid(row=6, column=0,)
     
     upgradePath(graph)
     
