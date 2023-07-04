@@ -10,6 +10,100 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+def drawGraphNXa(graph: Graph):
+    g = nx.Graph()
+    
+    for node, predecessors in graph.graph.items():
+        for predecessor in predecessors:
+            g.add_edge(node, predecessor)
+    # Dibujar el grafo
+    nx.draw(g, with_labels=True, node_color='lightblue', node_size=500,
+            font_size=10, edge_color='gray', width=1, alpha=0.7)
+
+    # Etiquetas de las aristas
+    labels = nx.get_edge_attributes(g, 'duration')
+    nx.draw_networkx_edge_labels(
+        g, pos=nx.spring_layout(g, seed=900), edge_labels=labels)
+
+    # Mostrar el gráfico
+    plt.show()
+    return
+    # graph.graph['1'][0].description
+def drawGraph(graph):
+    g = nx.DiGraph()
+    for node,neighbors in graph.graph.items():
+        g.add_node(node)
+        for neighbor in neighbors:
+            g.add_edge(node, neighbor.number)
+                
+    nx.draw(g, with_labels=True)
+    plt.show()
+
+def drawGraphNX(graph: Graph, criticalPath: list):
+    g = nx.DiGraph()
+
+    # Agregar nodos y aristas al grafo
+    for node, neighbors in graph.graph.items():
+        for neighbor in neighbors:
+            g.add_edge(node, neighbor.number)
+
+    # Crear un layout para el grafo
+    posNX = nx.spring_layout(g, seed=900)
+    
+    # Diccionario para elegir el color del path tomado para el camino mas corto
+    node_colors_criticalPath = {}
+
+    # Diccionario para elegir el color de los edges tomados para el camino mas corto
+    node_colors_criticalEdge = {}
+
+    # Diccionario para agregarle le peso al camino usado
+    edge_labels = {}
+
+    for node, neighbors in graph.graph.items():
+        origNode = ''
+        destNode = ''
+        for neighbor in neighbors:
+            edge_labels[(node, neighbor.number)] = str(neighbor.esd)+', ' +str(neighbor.efd)+', ' +str(neighbor.lsd)+', ' +str(neighbor.lfd)
+        if node in criticalPath:
+            node_colors_criticalPath[node] = 'red'
+            pos = criticalPath.index(node)
+            if (pos == 0):
+                node_colors_criticalPath[node] = "green"
+                # Se verifica si el nodo que se está revisando es el último para poder setear correctamente el nodo origen y destino
+            if (pos == len(criticalPath) - 1):
+                origNode = criticalPath[pos - 1]
+                destNode = criticalPath[pos]
+            else:
+                origNode = criticalPath[pos]
+                destNode = criticalPath[pos + 1] 
+        else:
+            node_colors_criticalPath[node] = "gray"
+            node_colors_criticalEdge[node] = 'gray'
+            continue
+        # En caso de que node se encuentre en el camino critico, se pinta de rojo su arista y se coloca su peso para ser visualizado
+        node_colors_criticalEdge[(origNode, destNode)] = 'red'
+        node_colors_criticalEdge[(destNode, origNode)] = 'red'
+        
+    colors_criticalPath = [node_colors_criticalPath[node] 
+                            for node in g.nodes()]
+    colors_criticalEdge = [node_colors_criticalEdge.get(
+    edge, 'gray') for edge in g.edges()]
+    # ESD: {node.esd}, EFD: {node.efd}, LSD: {node.lsd}, LFD: {node.lfd}
+    
+    plt.clf()
+    # Dibujar el grafo
+    nx.draw(g, pos=posNX, with_labels=True, node_size=600, node_color=colors_criticalPath,
+            font_size=10, edge_color=colors_criticalEdge, width=1, alpha=0.7)
+
+    # Dibujar las etiquetas de las aristas
+    nx.draw_networkx_edge_labels(
+        g, posNX, edge_labels=edge_labels, font_color='black', font_size=10, font_family='Arial')
+    plt.show()
+    # Agregar el canvas al lado derecho
+    # canvas = FigureCanvasTkAgg(plt.gcf(), master=right_frame)
+    # canvas.draw()
+    # canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
 def addPredecessor(predecessors, predecessor):
     predecessors.append(predecessor.get())
     activityList.remove(predecessor.get())

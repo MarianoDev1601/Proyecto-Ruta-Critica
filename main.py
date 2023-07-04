@@ -2,7 +2,7 @@ from interface.interface import start
 from classes.activity import Activity
 from classes.graph import Graph
 from scripts.csv import delete_activity, getActivitiesData, save_activity
-
+from interface.interface import drawGraphNX, drawGraph
 
 def create_activity():
     number:str = input('Número de actividad: ')
@@ -22,7 +22,9 @@ def main():
     graph:Graph = Graph()
     
     getActivitiesData(graph)
-
+    crit_path = graph.find_critical_path()
+    print(crit_path)
+    drawGraphNX(graph, crit_path)
     start(graph)
     
     # while True:
