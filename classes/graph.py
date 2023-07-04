@@ -154,15 +154,15 @@ class Graph:
     def write_graph(self):
         activities = []
         for activity in self.nodes.values():
-            activitys = ""
-            activitys += f"Activity: {activity.number}" + "\n"
-            activitys += f"Description: {activity.description}" + " | "
-            activitys += f"Duration: {activity.duration}" + " | "
-            activitys += f"ESD: {activity.esd}" + " | "
-            activitys += f"EFD: {activity.efd}" + " | "
-            activitys += f"LSD: {activity.lsd}" + " | "
-            activitys += f"LFD: {activity.lfd}" + " | "
-            activitys +="Holgura:" + str(activity.get_holgura()) + "\n\n\n"
+            text = ""
+            text += f"Número: {activity.number}" + "\n"
+            text += f"Descripción: {activity.description}" + " | "
+            text += f"Duración: {activity.duration}" + " | "
+            text += f"ESD: {activity.esd}" + " | "
+            text += f"EFD: {activity.efd}" + " | "
+            text += f"LSD: {activity.lsd}" + " | "
+            text += f"LFD: {activity.lfd}" + " | "
+            text +="Holgura:" + str(activity.get_holgura()) + "\n\n\n"
             #activitys +="-----------------------------------------------------------------------------------------\n"
-            activities.append(activitys)
+            activities.append(text)
         return activities
