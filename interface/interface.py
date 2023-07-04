@@ -69,30 +69,29 @@ def drawGraphNX(graph: Graph, criticalPath: list):
     edge_labels = {}
 
     for node, neighbors in graph.graph.items():
-        origNode = ''
-        destNode = ''
+        
         for neighbor in neighbors:
-            edge_labels[(node, neighbor.number)] = str(neighbor.esd)+', ' +str(neighbor.efd)+', ' +str(neighbor.lsd)+', ' +str(neighbor.lfd)
-        if node in criticalPath:
+            edge_labels[(node, neighbor.number)] = f"ESD: {neighbor.esd}, EFD: {neighbor.efd}, LSD: {neighbor.lsd}, LFD: {neighbor.lfd}"
+        activity = graph.nodes[node]    
+
+        if activity in criticalPath:
             node_colors_criticalPath[node] = 'red'
-            pos = criticalPath.index(node)
-            if (pos == 0):
-                node_colors_criticalPath[node] = "green"
-                # Se verifica si el nodo que se está revisando es el último para poder setear correctamente el nodo origen y destino
-            if (pos == len(criticalPath) - 1):
-                origNode = criticalPath[pos - 1]
-                destNode = criticalPath[pos]
-            else:
-                origNode = criticalPath[pos]
-                destNode = criticalPath[pos + 1] 
+            # Se verifica si el nodo que se está revisando es el último para poder setear correctamente el nodo origen y destino
         else:
             node_colors_criticalPath[node] = "gray"
             node_colors_criticalEdge[node] = 'gray'
             continue
         # En caso de que node se encuentre en el camino critico, se pinta de rojo su arista y se coloca su peso para ser visualizado
-        node_colors_criticalEdge[(origNode, destNode)] = 'red'
-        node_colors_criticalEdge[(destNode, origNode)] = 'red'
+        # node_colors_criticalEdge[(origNode, destNode)] = 'red'
+        # node_colors_criticalEdge[(destNode, origNode)] = 'red'
         
+    first_node = graph.init_activity.number
+    last_node = graph.final_activity.number
+
+    node_colors_criticalPath[first_node] = "green"
+    print(first_node)
+    node_colors_criticalPath[last_node] = "purple"
+
     colors_criticalPath = [node_colors_criticalPath[node] 
                             for node in g.nodes()]
     colors_criticalEdge = [node_colors_criticalEdge.get(
@@ -101,16 +100,28 @@ def drawGraphNX(graph: Graph, criticalPath: list):
     
     plt.clf()
     # Dibujar el grafo
-    nx.draw(g, pos=posNX, with_labels=True, node_size=600, node_color=colors_criticalPath,
+    nx.draw(g, pos=posNX, with_labels=True, node_size=400, node_color=colors_criticalPath,
             font_size=10, edge_color=colors_criticalEdge, width=1, alpha=0.7)
+    # Define the label text and positions
+    labels = {}
+    for node, pos in posNX.items():
+        neighbors = graph.graph.get(node, [])
+        for neighbor in neighbors:
+            esd_values = ", ".join([f"{neighbor.esd}"])
+            efd_values = ", ".join([f"{neighbor.efd}"])
+            lsd_values = ", ".join([f"{neighbor.lsd}"])
+            lfd_values = ", ".join([f"{neighbor.esd}"])
+            labels[node] = f"ESD: {esd_values}\nEFD: {efd_values}\nLSD: {lsd_values}\nLFD: {lfd_values}\n"
 
-    # Dibujar las etiquetas de las aristas
-    nx.draw_networkx_edge_labels(g, posNX, edge_labels=edge_labels, font_color='black', font_size=10, font_family='Arial')
-   
+    # Dibujar las etiquetas de los nodos
+    nx.draw_networkx_labels(g, pos=posNX, labels=labels, horizontalalignment= 'right', verticalalignment= 'bottom', font_size=10, font_color='blue', font_family='Arial')
+    # nx.draw_networkx_edge_labels(
+    #     g, posNX, font_color='black', font_size=10, font_family='Arial')
+    plt.show()
     # Agregar el canvas al lado derecho
-    canvas = FigureCanvasTkAgg(plt.gcf(), master = right_frame)
-    canvas.draw()
-    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    # canvas = FigureCanvasTkAgg(plt.gcf(), master=right_frame)
+    # canvas.draw()
+    # canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 def addPredecessor(predecessors, predecessor):
     if (predecessor.get() != ""):

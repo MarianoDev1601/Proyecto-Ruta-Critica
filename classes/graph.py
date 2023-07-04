@@ -68,8 +68,6 @@ class Graph:
         for successor in activity.successors:
             successor_activity = self.nodes[successor]
             if successor_activity.esd is None or successor_activity.esd < activity.efd:
-                print(f'Activity: {activity.number} - {activity.esd} - {activity.efd}')
-                print(f'Successor: {successor_activity.number} - {successor_activity.esd} - {successor_activity.efd}')
                 successor_activity.update_early_dates(activity.efd)
                 self.nodes[successor_activity.number] = successor_activity
                 self.calculate_early_dates_recursive(successor_activity)
