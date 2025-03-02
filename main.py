@@ -4,6 +4,7 @@ from classes.graph import Graph
 from scripts.csv import delete_activity, getActivitiesData, save_activity
 from interface.interface import drawGraphNX, drawGraph
 
+
 def create_activity():
     number:str = input('Número de actividad: ')
     desc:str = input('Descripción de actividad: ')
